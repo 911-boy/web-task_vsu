@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap">
+    <link rel="icon" type="image/jpg" href="/img/shapka.jpg">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Корзина - Clothing Store</title>
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/cart.css">
+</head>
+<body>
+    <div class="wrapper">
+        <header class="container">
+            <span class="logo">CLOTHING STORE</span>
+            <nav>
+                <ul>
+                    <li class="btn1"><a href="/cart.html">CART</a></li>
+                    <li class="btn1"><a href="/index.html">HOME</a></li>
+                    <li class="btn"><a href="/contact.html">CONTACTS</a></li>
+                    <li class="btn"><a href="/admin.html">ADMIN</a></li>
+                </ul>
+            </nav>
+            <div class="divider"></div>
+        </header>
+        <div class="container trending">
+            <h3>Ваша корзина</h3>
+            <div class="cart">
+                <ul id="cart-items"></ul>
+            </div>
+            <div class="cart-actions">
+                <button class="clear-cart">Очистить корзину</button>
+                <button class="pay-button">Оплатить</button>
+            </div>
+            
+            <div class="checkout-form" style="display: none;">
+                <h3>Оформление заказа</h3>
+                <form id="order-form">
+                    <div class="form-group">
+                        <label for="customer-name">Ваше имя</label>
+                        <input type="text" id="customer-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customer-email">Email</label>
+                        <input type="email" id="customer-email">
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="checkout-btn">Подтвердить заказ</button>
+                        <button type="button" class="cancel-order">Отмена</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <footer class="container">
+            <div class="footer-content">
+                <p>&copy; 2025 Clothing Store. All rights reserved.</p>
+                <button class="clear-cookies">Очистить cookies</button>
+            </div>
+        </footer>
+    </div>
+
+    <script src="/css/cart.js"></script>
+    <script src="/css/cookies.js"></script>
+</body>
+</html>

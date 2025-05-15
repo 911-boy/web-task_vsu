@@ -1,0 +1,289 @@
+.admin-content {
+    display: flex;
+    margin-top: 40px;
+    gap: 30px;
+}
+
+.admin-sidebar {
+    width: 200px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.admin-sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.admin-sidebar li {
+    padding: 10px 15px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.admin-sidebar li:hover {
+    background: rgba(220, 112, 0, 0.2);
+}
+
+.admin-sidebar li.active {
+    background: #DC7000;
+    color: white;
+}
+
+.admin-main {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 30px;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Таблицы */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.data-table th, .data-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.data-table th {
+    background: rgba(220, 112, 0, 0.2);
+    color: #DC7000;
+    font-weight: 600;
+}
+
+.data-table tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.data-table img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+/* Кнопки действий */
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.action-btn {
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.edit-btn {
+    background: #4CAF50;
+    color: white;
+}
+
+.edit-btn:hover {
+    background: #388E3C;
+}
+
+.delete-btn {
+    background: #F44336;
+    color: white;
+}
+
+.delete-btn:hover {
+    background: #D32F2F;
+}
+
+.view-btn {
+    background: #2196F3;
+    color: white;
+}
+
+.view-btn:hover {
+    background: #1976D2;
+}
+
+/* Формы */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #DC7000;
+}
+
+.form-group input, .form-group textarea {
+    width: 100%;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus, .form-group textarea:focus {
+    outline: none;
+    border-color: #DC7000;
+    box-shadow: 0 0 0 2px rgba(220, 112, 0, 0.2);
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.form-actions button {
+    padding: 12px 24px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+#save-product {
+    background: #DC7000;
+    color: white;
+}
+
+#save-product:hover {
+    background: #E87d0e;
+    transform: scale(1.02);
+}
+
+#cancel-edit {
+    background: transparent;
+    border: 1px solid #DC7000;
+    color: #DC7000;
+}
+
+#cancel-edit:hover {
+    background: rgba(220, 112, 0, 0.1);
+}
+
+/* Статистика */
+.stats-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 20px;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.stat-card h3 {
+    color: #DC7000;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.stat-card p {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+/* Фильтры для товаров */
+.product-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.product-filters input, .product-filters select {
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    color: white;
+}
+
+.product-filters input:focus, .product-filters select:focus {
+    outline: none;
+    border-color: #DC7000;
+}
+
+.price-filter, .sort-filter {
+    display: flex;
+    gap: 10px;
+}
+
+#apply-filters {
+    padding: 10px 20px;
+    background: #DC7000;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#apply-filters:hover {
+    background: #E87d0e;
+}
+
+/* Заказы */
+.order-details {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.order-customer p {
+    margin: 10px 0;
+}
+
+.back-button {
+    padding: 12px 24px;
+    background: transparent;
+    border: 1px solid #DC7000;
+    color: #DC7000;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: all 0.3s ease;
+}
+
+.back-button:hover {
+    background: rgba(220, 112, 0, 0.1);
+}
+
+.text-right {
+    text-align: right;
+} 
