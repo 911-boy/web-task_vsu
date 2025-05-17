@@ -10,6 +10,16 @@ app.use(express.static('.')); // Раздаем статические файл�
 
 // Инициализация БД и создание таблиц
 const db = new sqlite3.Database('./store.db');
+
+// Добавляем отладочный вывод для проверки существующей таблицы
+db.get("SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'products'", [], (err, row) => {
+    if (err) {
+        console.error('Ошибка при проверке таблицы products:', err);
+    } else {
+        console.log('Существующая структура таблицы products:', row ? row.sql : 'таблица не найдена');
+    }
+});
+
 db.serialize(() => {
     // Таблица товаров
     db.run(`CREATE TABLE IF NOT EXISTS products (
@@ -21,6 +31,36 @@ db.serialize(() => {
         category TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
+    
+    // После создания таблицы, проверим, есть ли столбец description
+    db.all("PRAGMA table_info(products)", [], (err, rows) => {
+        if (err) {
+            console.error('Ошибка при получении информации о столбцах таблицы:', err);
+            return;
+        }
+        
+        // Проверяем наличие столбца description
+        let hasDescriptionColumn = false;
+        if (rows && rows.length) {
+            for (const row of rows) {
+                if (row.name === 'description') {
+                    hasDescriptionColumn = true;
+                    break;
+                }
+            }
+        }
+        
+        // Если столбца нет, добавляем его
+        if (!hasDescriptionColumn) {
+            console.log('Добавление отсутствующего столбца description в таблицу products');
+            db.run("ALTER TABLE products ADD COLUMN description TEXT", [], err => {
+                if (err) console.error('Ошибка при добавлении столбца:', err);
+                else console.log('Столбец description успешно добавлен');
+            });
+        } else {
+            console.log('Столбец description уже существует в таблице products');
+        }
+    });
     
     // Таблица заказов
     db.run(`CREATE TABLE IF NOT EXISTS orders (
@@ -101,26 +141,45 @@ app.get('/api/products/:id', (req, res) => {
 app.post('/api/products', (req, res) => {
     const { name, price, image, description, category } = req.body;
     
-    // Валидация данных
-    if (!name || !price) {
-        return res.status(400).json({error: 'Название и цена обязательны'});
+    // Улучшенная валидация и преобразование данных
+    if (!name) {
+        return res.status(400).json({error: 'Название товара обязательно'});
     }
     
-    db.run(
-        'INSERT INTO products (name, price, image, description, category) VALUES (?, ?, ?, ?, ?)', 
-        [name, price, image, description, category], 
-        function(err) {
-            if (err) return res.status(500).json({error: err.message});
-            res.json({ 
-                id: this.lastID, 
-                name, 
-                price, 
-                image, 
-                description,
-                category 
-            });
-        }
-    );
+    // Преобразуем price в число, с проверкой
+    const priceNumber = parseInt(price);
+    if (isNaN(priceNumber) || priceNumber <= 0) {
+        return res.status(400).json({error: 'Цена должна быть положительным числом'});
+    }
+    
+    // Более подробное логирование для отладки
+    console.log('Добавление товара:', { name, price: priceNumber, image, description, category });
+    
+    try {
+        db.run(
+            'INSERT INTO products (name, price, image, description, category) VALUES (?, ?, ?, ?, ?)', 
+            [name, priceNumber, image || null, description || null, category || null], 
+            function(err) {
+                if (err) {
+                    console.error('Ошибка SQL при добавлении товара:', err);
+                    return res.status(500).json({error: err.message});
+                }
+                
+                console.log('Товар успешно добавлен, ID:', this.lastID);
+                res.json({ 
+                    id: this.lastID, 
+                    name, 
+                    price: priceNumber, 
+                    image, 
+                    description,
+                    category 
+                });
+            }
+        );
+    } catch (error) {
+        console.error('Исключение при добавлении товара:', error);
+        res.status(500).json({error: error.message});
+    }
 });
 
 // Обновить товар

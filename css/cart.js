@@ -62,22 +62,48 @@ document.addEventListener('DOMContentLoaded', function() {
             return products;
         } catch (error) {
             console.error('Ошибка при загрузке товаров:', error);
+            showNotification('Не удалось загрузить товары с сервера', 'error');
             return [];
         }
     }
 
     async function saveProductToDB(product) {
         try {
+            // Проверяем, что все обязательные поля заполнены
+            if (!product.name || !product.price) {
+                console.error('Не указано название или цена товара');
+                showNotification('Ошибка при сохранении товара: не указано название или цена', 'error');
+                return null;
+            }
+            
+            // Упрощаем объект данных, оставляя только те поля, которые точно есть в БД
+            const simplifiedProduct = {
+                name: product.name,
+                price: product.price,
+                image: product.image || null
+                // Не отправляем description и category, если не уверены, что они есть в БД
+            };
+            
+            console.log('Отправка данных на сервер:', simplifiedProduct);
+            
             const response = await fetch('http://localhost:3001/api/products', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(product)
+                body: JSON.stringify(simplifiedProduct)
             });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Ошибка при сохранении товара');
+            }
+            
             return await response.json();
         } catch (error) {
             console.error('Ошибка при сохранении товара:', error);
+            // Показываем уведомление, но не прерываем процесс
+            showNotification('Не удалось сохранить товар на сервере, но он добавлен в корзину', 'error');
             return null;
         }
     }
@@ -88,13 +114,17 @@ document.addEventListener('DOMContentLoaded', function() {
         cart.push({ title, price, image });
         localStorage.setItem('cart', JSON.stringify(cart));
         
-        // Сохраняем товар в БД
-        await saveProductToDB({
-            name: title,
-            price: price,
-            image: image,
-            description: 'Товар добавлен в корзину'
-        });
+        // Сохраняем товар в БД, но не блокируем процесс если произошла ошибка
+        try {
+            await saveProductToDB({
+                name: title,
+                price: price,
+                image: image
+                // Не отправляем description, так как в БД может отсутствовать этот столбец
+            });
+        } catch (error) {
+            console.error('Ошибка при сохранении товара на сервере:', error);
+        }
         
         showNotification('Товар добавлен в корзину!', 'success');
         updateCartDisplay();
@@ -102,6 +132,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Функция для обновления отображения корзины
     function updateCartDisplay() {
+        const cartItems = document.getElementById('cart-items');
+        // Проверяем, существует ли элемент cart-items на текущей странице
+        if (!cartItems) {
+            // Если элемента нет, просто пропускаем обновление отображения
+            console.log("Элемент cart-items не найден на странице, пропуск обновления отображения");
+            return;
+        }
+        
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
         cartItems.innerHTML = '';
 
@@ -150,14 +188,18 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.setItem('cart', JSON.stringify(cart));
             
             // Сохраняем каждый товар в БД
-            await saveProductToDB({
-                name: title,
-                price: price,
-                image: image,
-                description: 'Товар добавлен через Buy All'
-            });
-            
-            addedItems++;
+            try {
+                await saveProductToDB({
+                    name: title,
+                    price: price,
+                    image: image
+                    // Не отправляем description
+                });
+                
+                addedItems++;
+            } catch (error) {
+                console.error('Ошибка при сохранении товара через Buy All:', error);
+            }
         }
 
         if (addedItems > 0) {
@@ -202,12 +244,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Обработка оплаты
     if (payButton) {
-        payButton.addEventListener('click', function() {
-            const cart = JSON.parse(localStorage.getItem('cart')) || [];
-            if (cart.length === 0) {
-                showNotification('Корзина пуста!', 'error');
-                return;
-            }
+    payButton.addEventListener('click', function() {
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        if (cart.length === 0) {
+            showNotification('Корзина пуста!', 'error');
+            return;
+        }
             
             // Показываем форму оформления заказа
             document.querySelector('.checkout-form').style.display = 'block';
@@ -262,8 +304,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     showNotification(`Заказ #${result.id} успешно оформлен!`, 'success');
                     
                     // Очищаем корзину
-                    localStorage.removeItem('cart');
-                    updateCartDisplay();
+        localStorage.removeItem('cart');
+        updateCartDisplay();
                     
                     // Скрываем форму заказа
                     document.querySelector('.checkout-form').style.display = 'none';
